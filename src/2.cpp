@@ -6,6 +6,85 @@
 #include <stack>
 using namespace std;
 
+//节点类
+class Node {
+public:
+    enum class NodeType {
+        opt,
+        val,
+    };
+    Node() {
+        this->_l = nullptr;
+        this->_r = nullptr;
+        this->_opt = '\0';
+        this->_val = '0';
+    }
+
+    Node(NodeType type, int val) {
+        this->_type = type;
+        this->_l = nullptr;
+        this->_r = nullptr;
+        this->_val = val;
+    }
+    Node(NodeType type, char opt) {
+        this->_type = type;
+        this->_l = nullptr;
+        this->_r = nullptr;
+        this->_opt = opt;
+    }
+    ~Node() {}
+    void setL(Node* node) {
+        this->_l = node;
+    }
+    void setR(Node* node) {
+        this->_r = node;
+    }
+    Node* getL() {
+        return this->_l;
+    }
+    Node* getR() {
+        return this->_r;
+    }
+    void setVal(int val) {
+        this->_val = val;
+    }
+    int getVal() {
+        return this->_val;
+    }
+    void setOpt(char opt) {
+        this->_opt = opt;
+    }
+    char getOpt() {
+        return this->_opt;
+    }
+
+private:
+    int _val;
+    char _opt;
+    NodeType _type;
+    Node* _l;
+    Node* _r;
+};
+
+//算式类
+class Eq {
+public:
+    Eq(int deep) {
+        this->_deep = deep;
+        this->_root = initTree(deep);
+    }
+
+    string getQues();
+    string getAns();
+private:
+    int _deep;
+    Node _root;
+    Node initTree(int deep) {
+
+    }
+
+};
+
 //获取一个随机题目
 //toDo：去除多余括号，算式合法性
 string getSymbol() {
@@ -33,40 +112,8 @@ bool isNum(char chr) {
 
 string getQues(int maxNum, int len, int parNum) {
     
-    string ques = "";
-    int index = 0;
-    if(len % 2 == 0) len++;
-    while(index < len) {
-        if(index % 2) {
-            string symbol = getSymbol();
-            ques.append(symbol);
-        }
-        else {
-            string num = getNum(maxNum);
-            ques.append(num);
-        }
-        index++;
-    }
-
-    //插入括号
-    while(parNum--) {
-        int l = 0;
-        int r = 0;
-        while(l == r) {
-            l = rand()%len;
-            r = rand()%len;
-            if(l == r) continue;
-            l = min(l, r);
-            r = max(l, r);
-            //保证括号位置合理?
-            while(l != 0 && !isSym(ques[l-1])) l--;
-            while(r != len && isNum(ques[r])) r++;
-            ques.insert(l, "(");
-            ques.insert(r+1, ")");
-            len += 2;
-        }
-    }
-    return ques;
+    
+    
 }
 
 //初始化题库
