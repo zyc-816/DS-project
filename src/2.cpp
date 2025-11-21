@@ -117,7 +117,38 @@ private:
     string midOrder(Node* root) {
         if(root->l == nullptr && root->r == nullptr) return doubleToString(root->val);
         if(root->type == Node::NodeType::opt) {
-            return '(' + midOrder(root->l) + root->opt + midOrder(root->r) + ')';
+            string str = "";
+            if(root->l->type == Node::NodeType::opt) {
+                char op1 = root->opt;
+                char op2 = root->l->opt;
+                if(op1 == '+' || op1 == '-') {
+                    str += midOrder(root->l);
+                } else {
+                    if(op2 == '+' || op2 == '-') {
+                        str = str + '(' + midOrder(root->l) + ')';
+                    }
+                    else str += midOrder(root->l);
+                }
+            } else {
+                str += midOrder(root->l);
+            }
+            str += root->opt;
+            if(root->r->type == Node::NodeType::opt) {
+                char op1 = root->opt;
+                char op2 = root->r->opt;
+                if(op1 == '+') {
+                    str += midOrder(root->r);
+                } else {
+                    if(op2 == '+' || op2 == '-') {
+                        str = str + '(' + midOrder(root->r) + ')';
+                    } else {
+                        str += midOrder(root->r);
+                    }
+                }
+            } else {
+                str += midOrder(root->r);
+            }
+            return str;
         }
         return "";
     }
@@ -202,7 +233,7 @@ int main() {
     int i;
     cin>>i;
     while(i--) {
-        Eq eq(3);
+        Eq eq(4);
         cout<<eq.getQues()<<" = "<<eq.getAns()<<endl;
     }
 
