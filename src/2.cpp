@@ -6,6 +6,8 @@
 #include <stack>
 #include <iomanip>
 #include <sstream>
+#include <fstream>
+#include <vector>
 using namespace std;
 
 //节点类
@@ -220,22 +222,118 @@ private:
     }
 };
 
-//初始化题库
-void initQues() {
+struct Ques {
+    string ques;
+    double ans;
+};
 
+//初始化题库
+void initQues(int count = 50, int deep = 3) {
+    ofstream qus("Questions.txt");
+    qus<<setiosflags(ios::fixed)<<setprecision(1);
+    for(int i=0; i<count; i++) {
+        Eq eq(deep);
+        qus<<eq.getQues()<<"="<<eq.getAns()<<endl;
+    }
+    qus.close();
+    return;
+}
+
+//读取题库
+void readQues(vector<Ques>& questions) {
+    ifstream qus("Questions.txt");
+    string line;
+    while(getline(qus, line)) {
+        Ques q;
+        int pos = line.find('=');
+        q.ques = line.substr(0, pos+1);
+        string s_ans = line.substr(pos+1, line.length() - pos - 1);
+        q.ans = stod(s_ans);
+        questions.push_back(q);
+    }
+    qus.close();
+    return;
+}
+
+bool fileExist(string filename) {
+    ifstream file(filename);
+    return file.good(); //返回文件是否存在
+}
+
+void getHis(int& hisScore) {
+    if(!fileExist("history.txt")) {
+        ofstream file("history.txt");
+        file<<0;
+        file.close();
+    }
+    ifstream his("history.txt");
+    his>>hisScore;
+    return;
+}
+
+bool getInsturction(string mes) {
+    char flag = 'Y';
+    cout<<mes<<"(y/n) ";
+    cin>>flag;
+    cin.get();
+    if(flag == 'N' || flag == 'n') {
+        return false;
+    }
+    else if(flag == 'Y' || flag == 'y') {
+        return true;
+    }
+    else {
+        cout<<"输入错误"<<endl;
+        return getInsturction(mes);
+    }
+}
+
+void saveScore(int curScore, int hisScore) {
+    if(curScore > hisScore) {
+        ofstream his("history.txt");
+        his<<curScore;
+        cout<<"有进步，加油！"<<endl;
+    } else {
+        cout<<"还要继续努力哦~"<<endl;
+    }
+    
     return;
 }
 
 int main() {
-    srand((unsigned)time(NULL));
-    initQues();
+    srand((unsigned)time(NULL)); //设置随机数种子
     cout<<setiosflags(ios::fixed)<<setprecision(1); //设置精度
-    int i;
-    cin>>i;
-    while(i--) {
-        Eq eq(4);
-        cout<<eq.getQues()<<" = "<<eq.getAns()<<endl;
+    int hisScore = 0;
+    int curScore = 0;
+    getHis(hisScore);
+    int n = 0;
+    cout<<"请选择题库大小：";
+    cin>>n;
+    initQues(n);
+    vector<Ques> questions;
+    readQues(questions);
+
+    cout<<"历史最高分："<<hisScore<<endl;
+    cout<<"当前得分："<<curScore<<endl;
+    while(1) {
+        if(getInsturction("是否继续答题？(答案请保留一位小数)")) {
+            int id = rand()%questions.size();
+            Ques q = questions[id];
+            cout<<q.ques<<" ";
+            double ans;
+            cin>>ans;
+            if(ans == q.ans) {
+                curScore++;
+                cout<<"答对了！加1分(当前得分："<<curScore<<")"<<endl;
+            } else {
+                cout<<"答错了！(当前得分："<<curScore<<")"<<endl;
+            }
+        } else {
+            break;
+        }
     }
 
+    saveScore(curScore, hisScore);
+    
     return 0;
 }
