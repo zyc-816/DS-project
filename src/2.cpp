@@ -13,57 +13,25 @@ public:
         opt,
         val,
     };
-    Node() {
-        this->_l = nullptr;
-        this->_r = nullptr;
-        this->_opt = '\0';
-        this->_val = '0';
+    int val;
+    char opt;
+    NodeType type;
+    Node* l;
+    Node* r;
+    Node(int _val) {
+        this->type = NodeType::val;
+        this->l = nullptr;
+        this->r = nullptr;
+        this->val = _val;
+        this->opt = '\0';
     }
-
-    Node(NodeType type, int val) {
-        this->_type = type;
-        this->_l = nullptr;
-        this->_r = nullptr;
-        this->_val = val;
-    }
-    Node(NodeType type, char opt) {
-        this->_type = type;
-        this->_l = nullptr;
-        this->_r = nullptr;
-        this->_opt = opt;
-    }
-    ~Node() {}
-    void setL(Node* node) {
-        this->_l = node;
-    }
-    void setR(Node* node) {
-        this->_r = node;
-    }
-    Node* getL() {
-        return this->_l;
-    }
-    Node* getR() {
-        return this->_r;
-    }
-    void setVal(int val) {
-        this->_val = val;
-    }
-    int getVal() {
-        return this->_val;
-    }
-    void setOpt(char opt) {
-        this->_opt = opt;
-    }
-    char getOpt() {
-        return this->_opt;
-    }
-
-private:
-    int _val;
-    char _opt;
-    NodeType _type;
-    Node* _l;
-    Node* _r;
+    Node(char _opt) {
+        this->type = NodeType::opt;
+        this->l = nullptr;
+        this->r = nullptr;
+        this->opt = _opt;
+        this->val = '0';
+    }   
 };
 
 //算式类
@@ -71,32 +39,61 @@ class Eq {
 public:
     Eq(int deep) {
         this->_deep = deep;
-        this->_root = initTree(deep);
+        initTree(deep, this->_root);
     }
-
-    string getQues();
+    ~Eq() {
+        delTree(this->_root);
+    }
+    //中序遍历获得算式
+    string getQues() {
+        return midOrder(this->_root);
+    }
+    //后序遍历得到后缀表达式并计算
     string getAns();
 private:
     int _deep;
-    Node _root;
-    Node initTree(int deep) {
-
+    Node* _root;
+    int getNum(int maxNum = 100) {
+        int ranNum = rand()%(maxNum+1);
+        return ranNum;
+    }
+    char getSymbol() {
+        char symbols[] = {'+', '-', '*', '/'};
+        int ranSym = rand()%4;
+        return symbols[ranSym];
+    }
+    void initTree(int deep, Node*& root) {
+        if(deep == 1) {
+            int num = getNum();
+            root = new Node(num);
+            return;
+        }
+        else {
+            char chr = getSymbol();
+            root = new Node(chr);
+            initTree(deep-1, root->l);
+            initTree(deep-1, root->r);
+        }
+    }
+    void delTree(Node* root) {
+        if(!root) return;
+        if(root->l) delTree(root->l);
+        if(root->r) delTree(root->r);
+        delete root;
+        return;
     }
 
+    string midOrder(Node* root) {
+        if(root->l == nullptr && root->r == nullptr) return to_string(root->val);
+        if(root->type == Node::NodeType::opt) {
+            return midOrder(root->l) + root->opt + midOrder(root->r);
+        }
+        return "";
+    }
 };
 
 //获取一个随机题目
 //toDo：去除多余括号，算式合法性
-string getSymbol() {
-    string symbols[] = {"+", "-", "*", "/"};
-    int ranSym = rand()%4;
-    return symbols[ranSym];
-}
-
-string getNum(int maxNum) {
-    int ranNum = rand()%(maxNum+1);
-    return to_string(ranNum);
-}
 
 bool isSym(char chr) {
     char sym[] = {'+', '-', '*', '/'};
@@ -110,11 +107,6 @@ bool isNum(char chr) {
     return chr >= '0' && chr <='9';
 }
 
-string getQues(int maxNum, int len, int parNum) {
-    
-    
-    
-}
 
 //初始化题库
 void initQues() {
@@ -225,10 +217,8 @@ int main() {
     int i;
     cin>>i;
     while(i--) {
-        int ans;
-        string eq = getQues(10, 5, 1);
-        calEq(eq, ans);
-        cout<<eq<<" = "<<ans<<endl;
+        Eq eq(4);
+        cout<<eq.getQues()<<endl;
     }
 
     return 0;
