@@ -3,6 +3,8 @@
 #include <map>
 #include <unordered_map>
 #include <string>
+#include <queue>
+#include <cmath>
 using namespace std;
 
 class Vertex {
@@ -31,6 +33,22 @@ public:
         for(auto v : adjList) {
             delete v.first;
         }
+    }
+    bool topoSort(vector<Vertex*>& L) {
+        queue<Vertex*> S;
+        for(auto v : in) {
+            if(v.second == 0) S.push(v.first);
+        }
+        while(!S.empty()) {
+            Vertex* u = S.front();
+            S.pop();
+            L.push_back(u);
+            for(auto v : adjList[u]) {
+                if(--in[v] == 0) S.push(v);
+            }
+        }
+        if(L.size() == adjList.size()) return true;
+        else return false;
     }
 private:
     void addVertex(Vertex* vet) {
@@ -114,6 +132,36 @@ int main() {
     }
 
     GraphAdjList graph(vets);
+    vector<Vertex*> L;
+    bool flag = graph.topoSort(L);
+    if(flag) {
+        cout<<"可行的教学计划为："<<endl;
+        vector<string> grade = {
+            "大一","大二","大三","大四",
+        };
+        vector<string> season = {
+            "上","下",
+        };
+        int len = L.size();
+        int per = ceil(len/8.0);
+        int mul = 1;
+        int index = 0;
+        for(auto g : grade) {
+            for(auto s : season) {
+                cout<<g<<s<<": "<<endl;
+                int num = 1;
+                int mod = mul * per;
+                if(mod > len) mod = len;
+                while(index < mod) {
+                    cout<<num++<<". "<<L[index]->name<<endl;
+                    index++;
+                }
+                mul++;
+            }
+        }
+    } else {
+        cout<<"不存在可行的教学计划"<<endl;
+    }
 
     return 0;
 }
