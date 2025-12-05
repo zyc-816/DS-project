@@ -149,6 +149,10 @@ public:
         return;
     }
 
+    Node* getRoot() {
+        return this->root;
+    }
+
     void deCode(string nums) {
         Node* r = this->root;
         string res = "";
@@ -168,6 +172,20 @@ public:
             if(num == 1) r = r->r;
         }
         cout<<"译码结果为："<<res<<endl;
+        return;
+    }
+
+    void printTree(Node* T) {
+        if(!T) return;
+        if(T->l || T->r) {
+            printf("%d(", T->val);
+            printTree(T->l);
+            if(T->r) printf(",");
+            printTree(T->r);
+            printf(")");
+        } else {
+            printf("%c", T->chr);
+        }
         return;
     }
     
@@ -224,7 +242,8 @@ int main() {
         <<"0. 退出\n"
         <<"1. 显示哈夫曼编码\n"
         <<"2. 编码\n"
-        <<"3. 译码\n";
+        <<"3. 译码\n"
+        <<"4. 打印哈夫曼树\n";
         cin>>ins;
         switch(ins) {
             case 0: {
@@ -250,6 +269,11 @@ int main() {
                 huff.deCode(nums);
                 break;
             } 
+            case 4: {
+                huff.printTree(huff.getRoot());
+                cout<<endl;
+                break;
+            }
         }
     }
     return 0;
