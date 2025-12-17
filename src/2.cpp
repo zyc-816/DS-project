@@ -8,6 +8,7 @@
 #include <sstream>
 #include <fstream>
 #include <vector>
+#include <limits>
 using namespace std;
 
 //节点类
@@ -17,7 +18,7 @@ public:
         opt,
         val,
     };
-    double val;
+    int val;
     char opt;
     NodeType type;
     Node* l;
@@ -117,7 +118,7 @@ private:
     }
 
     string midOrder(Node* root) {
-        if(root->l == nullptr && root->r == nullptr) return doubleToString(root->val);
+        if(root->l == nullptr && root->r == nullptr) return intToString(root->val);
         if(root->type == Node::NodeType::opt) {
             string str = "";
             if(root->l->type == Node::NodeType::opt) {
@@ -214,10 +215,10 @@ private:
         return OPND.top();
     }
 
-    //将浮点数转为字符串
-    string doubleToString(double val) {
+    //将int转为字符串
+    string intToString(int val) {
         stringstream stream; 
-        stream << fixed << setprecision(1) << val;
+        stream << val;
         return stream.str();
     }
 };
@@ -321,7 +322,13 @@ int main() {
             Ques q = questions[id];
             cout<<q.ques<<" ";
             double ans;
-            cin>>ans;
+            while(1) {
+                if(cin>>ans) break;
+                else cout<<"非法输入，请重新输入\n";
+                cin.clear();
+                cin.ignore(std::numeric_limits<int>::max(), '\n');
+                cout<<q.ques<<" ";
+            }
             if(ans == q.ans) {
                 curScore++;
                 cout<<"答对了！加1分(当前得分："<<curScore<<")"<<endl;
