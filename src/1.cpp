@@ -125,10 +125,27 @@ bool delStr(string str, char article[], vector<int>& lines) {
     line--;
 
     int delt = sumLine - pos; //pos所在行减去的长度
-    lines[line] -= delt;
+    //之后每行都要减去delt
+    for(int i=line; i<lines.size(); i++) {
+        lines[i] -= delt;
+    }
     //若删去子串有部分在下一行，则下一行行表应减去剩下的部分
-    if(delt < len) {
-        lines[line+1] -= (len -delt);
+    int left = len - delt; //剩余需要删除的长度
+    int l = line+1; //待处理行标
+    while(left > 0) {
+        int length = lines[l] - lines[l-1]; //当前行长度
+        if(length >= left) {
+            for(int i=l; i<lines.size(); i++) {
+                lines[i] -= left;
+            }
+            left = 0;
+        } else {
+            for(int i=l; i<lines.size(); i++) {
+                lines[i] -= length;
+            }
+            left -= length;
+        }
+        l++;
     }
 
     //删除子串
