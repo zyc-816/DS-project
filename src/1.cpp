@@ -26,6 +26,7 @@ void getArticle(char article[], vector<int>& lines, int N) {
 void countArticle(const char article[], 
 int &letterCnt, int &numCnt, int &spaceCnt, int &totalCnt, int N) {
     int index = 0;
+    letterCnt = numCnt = spaceCnt = totalCnt = 0; //初始化计数
     while(article[index] != '\0') {
         char chr = article[index];
         if(isalpha(chr)) letterCnt++;
@@ -51,23 +52,6 @@ void printArticle(const char article[], const vector<int>& lines, int N) {
     cout<<endl;
 
     return;
-}
-
-bool getInsturction(string mes) {
-    char flag = 'Y';
-    cout<<mes<<"(y/n) ";
-    cin>>flag;
-    cin.get();
-    if(flag == 'N' || flag == 'n') {
-        return false;
-    }
-    else if(flag == 'Y' || flag == 'y') {
-        return true;
-    }
-    else {
-        cout<<"输入错误"<<endl;
-        return getInsturction(mes);
-    }
 }
 
 int findStr(string str, const char article[], int& cnt) {
@@ -180,27 +164,57 @@ int main() {
     cout<<"数字个数："<<numCnt<<endl;
     cout<<"空格个数："<<spaceCnt<<endl;
     cout<<"文章总字数："<<totalCnt<<endl;
-    if(getInsturction("是否需要统计字符串出现次数？")) {
-        string str;
-        cout<<"请输入需要统计的字符串："<<endl;
-        cin>>str;
-        int strCnt = 0;
-        findStr(str, article, strCnt);
-        cout<<"字符串出现次数为："<<strCnt<<endl;
-    }
 
-    if(getInsturction("是否需要删除字符串？")) {
-        string str;
-        cout<<"请输入需要删除的字符串："<<endl;
-        cin>>str;
-        if(delStr(str, article, lines)) {
-            cout<<"删除成功！"<<endl;
-            cout<<"删除后文章内容为："<<endl;
-            printArticle(article, lines, N);
+    while(1) {
+        cout<<"请选择操作：\n"
+        <<"0. 退出\n"
+        <<"1. 统计字符串出现次数\n"
+        <<"2. 删除字符串\n"
+        <<"3. 输出文章内容及统计信息\n";
+        int ins;
+        cin>>ins;
+        switch(ins) {
+            case 0: {
+                return 0;
+                break;
+            }
+            case 1: {
+                string str;
+                cout<<"请输入需要统计的字符串："<<endl;
+                cin>>str;
+                int strCnt = 0;
+                findStr(str, article, strCnt);
+                cout<<"字符串出现次数为："<<strCnt<<endl;
+                break;
+            }
+            case 2: {
+                string str;
+                cout<<"请输入需要删除的字符串："<<endl;
+                cin>>str;
+                if(delStr(str, article, lines)) {
+                    cout<<"删除成功！"<<endl;
+                    cout<<"删除后文章内容为："<<endl;
+                    printArticle(article, lines, N);
+                }
+                else cout<<"未找到目标字符串！"<<endl;
+                break;
+            }
+            case 3: {
+                countArticle(article, letterCnt, numCnt, spaceCnt, totalCnt, N);
+                cout<<"文章内容为："<<endl;
+                printArticle(article, lines, N);
+                cout<<"全部字母数："<<letterCnt<<endl;
+                cout<<"数字个数："<<numCnt<<endl;
+                cout<<"空格个数："<<spaceCnt<<endl;
+                cout<<"文章总字数："<<totalCnt<<endl;
+                break;
+            }
+            default: {
+                cout<<"输入错误，请重新输入\n";
+                break;
+            }
         }
-        else cout<<"未找到目标字符串！"<<endl;
     }
-    
 
     return 0;
 }
