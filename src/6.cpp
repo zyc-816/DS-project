@@ -174,6 +174,10 @@ int dijstra(string start, string end, vector<int>& path) {
 int main() {
     string start, end;
     vector<int> path;
+    cout<<"包含的城市有：\n";
+    for(int i=0; i<citys.size(); i++) {
+        cout<<i<<". "<<citys[i]<<endl;
+    }
     cout<<"请输入起点和终点（以空格隔开）："<<endl;
     cin>>start;
     cin>>end;
