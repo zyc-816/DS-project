@@ -156,6 +156,7 @@ public:
     void deCode(string nums) {
         Node* r = this->root;
         string res = "";
+        if(!r) return;
         for(auto chr : nums) {
             int num;
             if(chr == '1') num = 1;
@@ -164,12 +165,12 @@ public:
                 cout<<"error: 编码格式错误"<<endl;
                 return;
             }
-            if(!r->l && !r->r) {
+            if(num == 0) r = r->l;
+            if(num == 1) r = r->r;
+            if(r && !r->l && !r->r) {
                 res += r->chr;
                 r = this->root;
             }
-            if(num == 0) r = r->l;
-            if(num == 1) r = r->r;
         }
         cout<<"译码结果为："<<res<<endl;
         return;
