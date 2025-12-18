@@ -102,13 +102,10 @@ bool delStr(string str, char article[], vector<int>& lines) {
     
     //修改行表
     int line = 0; //pos所在行
-    int sumLine = 0; // 到pos所在行为止总字符数（含pos所在行）
-    for(line=0; pos>=sumLine; line++) {
-        sumLine += lines[line];
+    while(pos >= lines[line]) {
+        line++;
     }
-    line--;
-
-    int delt = sumLine - pos; //pos所在行减去的长度
+    int delt = lines[line] - pos; //pos所在行减去的长度
     //之后每行都要减去delt
     for(int i=line; i<lines.size(); i++) {
         lines[i] -= delt;
