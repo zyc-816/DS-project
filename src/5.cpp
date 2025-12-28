@@ -4,6 +4,7 @@
 #include <vector>
 #include <fstream>
 #include <algorithm>
+#include <cmath>
 using namespace std;
 
 //记录排序函数信息
@@ -137,10 +138,56 @@ void _quickSort(vector<int>& nums, int left, int right) {
     return;
 }
 
-//统一参数，便于调用
+//统一快速排序参数，便于调用
 void quickSort(vector<int>& nums) {
     int n = nums.size();
     _quickSort(nums, 0, n-1);
+    saveData(__func__, nums);
+    return;
+}
+
+void shellInsert(vector<int>& nums, int dk){    //希尔插入排序 
+    int j = dk;
+    for(; j<nums.size(); j++) {
+        int base = nums[j];
+        while(j-dk>=0 && base < nums[j-dk]) {
+            nums[j] = nums[j-dk];
+            j -= dk;
+        }
+        nums[j] = base;
+    }
+    return;
+}
+
+void shellSort(vector<int>& nums) {
+    vector<int> dlta;
+    int i = 0;
+    int j = 0;
+    while(1) {
+        int gap1 = 9*(int)pow(4, i) - 9*(int)pow(2, i) + 1;
+        int gap2 = (int)pow(4, j) - 3*(int)pow(2, j) + 1;
+        if(gap1 >= nums.size() && gap2 >= nums.size()) break;
+        if(gap1 < gap2) {
+            if(gap1 > 0) {
+                dlta.push_back(gap1);
+            }
+            i++;
+        } else if(gap2 < gap1) {
+            if(gap2 > 0) {
+                dlta.push_back(gap2);
+            }
+            j++;
+        } else if(gap1 == gap2) {
+            if(gap1 > 0) {
+                dlta.push_back(gap1);
+            }
+            i++;
+            j++;
+        }
+    }
+    for(int k=0; k<dlta.size(); k++) {
+        shellInsert(nums, dlta[k]);
+    }
     saveData(__func__, nums);
     return;
 }
@@ -170,12 +217,14 @@ int main() {
         bubbleSort,
         insertionSort,
         quickSort,
+        shellSort,
     };
     vector<FUNC> funcs = {
         {0, "选择排序"},
         {0, "冒泡排序"},
         {0, "插入排序"},
         {0, "快速排序"},
+        {0, "希尔排序"},
     };
     for(int i=0; i<func.size(); i++) {
         double time = getFuncTime(func[i], nums);
