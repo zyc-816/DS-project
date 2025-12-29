@@ -146,7 +146,8 @@ void quickSort(vector<int>& nums) {
     return;
 }
 
-void shellInsert(vector<int>& nums, int dk){    //希尔插入排序 
+//希尔插入排序
+void shellInsert(vector<int>& nums, int dk) {
     int j = dk;
     for(; j<nums.size(); j++) {
         int base = nums[j];
@@ -163,6 +164,7 @@ void shellSort(vector<int>& nums) {
     vector<int> dlta;
     int i = 0;
     int j = 0;
+    //生成Sedgewick序列
     while(1) {
         int gap1 = 9*(int)pow(4, i) - 9*(int)pow(2, i) + 1;
         int gap2 = (int)pow(4, j) - 3*(int)pow(2, j) + 1;
@@ -185,9 +187,83 @@ void shellSort(vector<int>& nums) {
             j++;
         }
     }
+    //反转序列，逐渐减小到1
+    reverse(dlta.begin(), dlta.end());
     for(int k=0; k<dlta.size(); k++) {
         shellInsert(nums, dlta[k]);
     }
+    saveData(__func__, nums);
+    return;
+}
+
+//堆排序
+void heapAdjust(vector<int>& nums,int s,int m){
+    int temp = nums[s];
+    for(int j=2*s; j<=m; j*=2) {
+        if(j<m && nums[j] < nums[j+1]) j++;
+        if(temp >= nums[j]) break;
+        nums[s] = nums[j];
+        s = j;
+    }
+    nums[s] = temp;
+    return;
+} 
+
+void heapSort(vector<int>& nums){
+    int len = nums.size();
+    for(int i=len/2; i>0; i--) {
+        heapAdjust(nums, i, len-1);
+    }
+
+    for(int i=len-1; i>0; i--) {
+        int t;
+        t = nums[0];
+        nums[0] = nums[i];
+        nums[i] = t;
+        heapAdjust(nums, 0, i-1);
+    }
+
+    saveData(__func__, nums);
+    return;
+}
+
+//归并排序
+void Merge(vector<int>& nums, int i, int m, int n){
+    int left = i;
+    int right = m+1;
+    vector<int> temp;
+    while(left<=m && right <=n) {
+        if(nums[left] < nums[right]) {
+            temp.push_back(nums[left++]);
+        } else {
+        	temp.push_back(nums[right++]);
+        }
+    }
+    while(left<=m) {
+        temp.push_back(nums[left++]);
+    }
+    while(right<=n) {
+        temp.push_back(nums[right++]);
+    }
+    for(int k=0; k<temp.size(); k++) {
+        nums[k+i] = temp[k];
+    }
+
+    return;
+}
+
+void MSort(vector<int>& nums,int s,int t){
+    if(s >= t) return;
+    int mid = (s+t) / 2;
+    MSort(nums, s, mid);
+    MSort(nums, mid+1, t);
+    Merge(nums, s, mid, t);
+    return;
+}
+
+void mergeSort(vector<int>& nums){
+    MSort(nums, 0, nums.size()-1);
+    
     saveData(__func__, nums);
     return;
 }
@@ -218,6 +294,8 @@ int main() {
         insertionSort,
         quickSort,
         shellSort,
+        heapSort,
+        mergeSort,
     };
     vector<FUNC> funcs = {
         {0, "选择排序"},
@@ -225,6 +303,8 @@ int main() {
         {0, "插入排序"},
         {0, "快速排序"},
         {0, "希尔排序"},
+        {0, "堆排序"},
+        {0, "归并排序"},
     };
     for(int i=0; i<func.size(); i++) {
         double time = getFuncTime(func[i], nums);
