@@ -197,7 +197,7 @@ void shellSort(vector<int>& nums) {
 }
 
 //堆排序
-void heapAdjust(vector<int>& nums,int s,int m){
+void heapAdjust(vector<int>& nums,int s,int m) {
     int temp = nums[s];
     for(int j=2*s; j<=m; j*=2) {
         if(j<m && nums[j] < nums[j+1]) j++;
@@ -209,7 +209,7 @@ void heapAdjust(vector<int>& nums,int s,int m){
     return;
 } 
 
-void heapSort(vector<int>& nums){
+void heapSort(vector<int>& nums) {
     int len = nums.size();
     for(int i=len/2; i>0; i--) {
         heapAdjust(nums, i, len-1);
@@ -228,7 +228,7 @@ void heapSort(vector<int>& nums){
 }
 
 //归并排序
-void Merge(vector<int>& nums, int i, int m, int n){
+void Merge(vector<int>& nums, int i, int m, int n) {
     int left = i;
     int right = m+1;
     vector<int> temp;
@@ -252,7 +252,7 @@ void Merge(vector<int>& nums, int i, int m, int n){
     return;
 }
 
-void MSort(vector<int>& nums,int s,int t){
+void MSort(vector<int>& nums,int s,int t) {
     if(s >= t) return;
     int mid = (s+t) / 2;
     MSort(nums, s, mid);
@@ -261,7 +261,7 @@ void MSort(vector<int>& nums,int s,int t){
     return;
 }
 
-void mergeSort(vector<int>& nums){
+void mergeSort(vector<int>& nums) {
     MSort(nums, 0, nums.size()-1);
     
     saveData(__func__, nums);
